@@ -9,10 +9,20 @@ Mealdict = {0: 'Brunch', 1: 'Breakfast', 2: 'Lunch', 3: 'Dinner'}
 today = str(date.today())
 Parameters = [today, 3, 0] #for calling grabMenus, with default values
 all_dishes_list = []
+colorVeg = '#a3d092'
+colorNoVeg = '#c7e2bd'
+colorBg = 'white'
+colorText = '#292929'
+colorStar = '#FFFFF0'
+colorToggleOff= "#c7a68f"
+colorToggleOn = '#825426'
+colorToggleOffDate='#B9BBB6'
+colorToggleOnDate='#5B5C5E'
 
 #widget object
 window = Tk()
 window.title("GauchoGrub")
+window.configure(background=colorBg)
 
 #list of starred foods
 favFoods = []
@@ -39,11 +49,11 @@ for i in range(7):
     date_string_list.append(string)
 
 #meal and date selection frame 
-topFrame = Frame(window, width=100, height=3, bg='white')
+topFrame = Frame(window, width=100, height=3, bg = colorBg)
 topFrame.grid(row = 0, column = 0)
 
 #list of foods frame
-listFrame = Frame(window, width=100, height = 3, bg = '#A9BA9D')
+listFrame = Frame(window, width=100, height = 3, bg = colorBg)
 listFrame.grid(row = 2, column = 0)
 
 #object for toggle button for meal selection
@@ -60,18 +70,18 @@ class meals(Button):
     def click_function(self):
         if self.config('relief')[-1] == 'sunken':
             self.config(relief="raised")
-            self.config(bg = "white")
+            self.config(bg = colorToggleOff)
             Parameters[1] = -1 #changes parameter for apply -> grabMenu
             #similar construct for date and veg/v buttons
         else:
             self.config(relief="sunken")
-            self.config(bg = "#717171")
+            self.config(bg = colorToggleOn)
             Parameters[1] = self.ID
             for meal in self.registry:
                 if meal != self:
                     #print(meal)
                     meal.config(relief="raised")
-                    meal.config(bg = "white")
+                    meal.config(bg = colorToggleOff)
     
 
 #object for toggle button for date selection
@@ -87,17 +97,17 @@ class dates(Button):
     def click_function(self):
         if self.config('relief')[-1] == 'sunken':
             self.config(relief="raised")
-            self.config(bg = "white")
+            self.config(bg = colorToggleOffDate)
             Parameters[0] = ""
         else:
             self.config(relief="sunken")
-            self.config(bg = "#717171")
+            self.config(bg = colorToggleOnDate)
             Parameters[0] = self.ID
             for date in self.registry:
                 if date != self:
                     #print(date)
                     date.config(relief="raised")
-                    date.config(bg = "white")
+                    date.config(bg = colorToggleOffDate)
 
 #toggle button for all stars button
 class star(Button):
@@ -111,7 +121,7 @@ class star(Button):
         #and add or delete it from fav food
         if self.config('relief')[-1] == 'sunken':
             self.config(relief="raised")
-            self.config(bg = "white")
+            self.config(bg = colorStar)
             if food in favFoods:
                 favFoods.remove(food)
         else:
@@ -134,16 +144,16 @@ class veg(Button):
     def click_function(self):
         if self.config('relief')[-1] == 'sunken':
             self.config(relief="raised")
-            self.config(bg = "chartreuse1")
+            self.config(bg = colorNoVeg)
             Parameters[2] = 0
         else:
             self.config(relief="sunken")
-            self.config(bg = "green")
+            self.config(bg = colorVeg)
             Parameters[2] = self.ID
             for veg in self.registry:
                 if veg != self:
                     veg.config(relief="raised")
-                    veg.config(bg = "chartreuse1")
+                    veg.config(bg = colorNoVeg)
 
 # format of the url: 
 # https://apps.dining.ucsb.edu/menu/day?dc=carrillo&d=2024-01-13&m=breakfast&m=brunch&m=lunch&m=dinner&m=late-night&food=
@@ -228,7 +238,9 @@ def generateMenu(menu, col):
     labelDc = Label(listFrame,
                  text= DCdict[1 + col/2],
                  width = 37,
-                 anchor = CENTER).grid(row = 0,
+                 anchor = CENTER,
+                 bg = colorBg,
+                 fg = colorText).grid(row = 0,
                                 column = col, columnspan = 2)
     if(len(menu) == 0):
         #no food from here
@@ -236,7 +248,8 @@ def generateMenu(menu, col):
                         text = "Food is not available here",
                         width = 37,
                         pady = 5, 
-                        bg = '#A9BA9D').grid(row = 1,
+                        bg = colorBg,
+                        fg = colorText).grid(row = 1,
                                         column = col)
         #blank out the menu
         for i in range(1,26):
@@ -244,25 +257,27 @@ def generateMenu(menu, col):
                             text = "",
                             width = 37,
                             pady = 5, 
-                            bg = '#A9BA9D').grid(row = i+1,
+                            bg = colorBg,
+                            fg=colorText).grid(row = i+1,
                                             column = col)
-    color = "white"
+    color = colorBg
     for i in range(len(menu)):
         #check for vegan and vegetarian 
         #vegetarian can eat vegan food, not vice versa
         if(Parameters[2] == 1):
             if(menu[i].find("(vgn)") > 0 or menu[i].find("(v)") > 0):
-                color = "green"
+                color = colorVeg
         elif(Parameters[2] == 2):
             if(menu[i].find("(vgn)") > 0):
-                color = "green"
+                color = colorVeg
         food = Label(listFrame,
                             text = menu[i],
                             width = 34,
                             pady = 5, 
-                            bg = color).grid(row = i+1,
+                            bg = color,
+                            fg=colorText).grid(row = i+1,
                                             column = col)
-        color = "white"
+        color = colorBg
         #if already in favorite food, starred
         if menu[i] in favFoods:
             Button = star(listFrame,
@@ -276,7 +291,8 @@ def generateMenu(menu, col):
             Button = star(listFrame,
                             text = '*',
                             width = 1,
-                            height = 1).grid(row=i+1,
+                            height = 1,
+                            bg = colorStar).grid(row=i+1,
                                             column=col + 1)
 
 #save and delete from document favFood.txt --> makes favorite food list lasting 
@@ -305,7 +321,7 @@ def generateGUI():
 buttonBrunch = meals(topFrame,
                         text="Brunch",
                         width=12,
-                        bg = "white",
+                        bg = colorToggleOff,
                         relief="raised")
 buttonBrunch.set_ID(0) #ID determines which one is called --> changes Parameters
 buttonBrunch.grid(row = 2, column = 0)
@@ -313,7 +329,7 @@ buttonBrunch.grid(row = 2, column = 0)
 buttonBreakfast = meals(topFrame,
                         text="Breakfast",
                         width=12,
-                        bg = "white",
+                        bg = colorToggleOff,
                         relief="raised")
 buttonBreakfast.grid(row = 2, column = 1)
 buttonBreakfast.set_ID(1)
@@ -321,7 +337,7 @@ buttonBreakfast.set_ID(1)
 buttonLunch = meals(topFrame,
                     text="Lunch",
                     width=12,
-                    bg = "white",
+                    bg = colorToggleOff,
                     relief="raised")
 buttonLunch.grid(row = 2, column = 2)
 buttonLunch.set_ID(2)
@@ -329,7 +345,7 @@ buttonLunch.set_ID(2)
 buttonDinner = meals(topFrame,
                     text="Dinner",
                     width=12,
-                    bg = "gray",
+                    bg = colorToggleOn,
                     relief="sunken")
 buttonDinner.grid(row = 2, column = 3)
 buttonDinner.set_ID(3)
@@ -339,7 +355,7 @@ buttonDinner.set_ID(3)
 buttonToday = dates(topFrame,
                         text="Today",
                         width=12,
-                        bg = "gray",
+                        bg = colorToggleOnDate,
                         relief="sunken")
 buttonToday.grid(row = 1, column = 0)
 buttonToday.set_ID(date_string_list[0])
@@ -347,7 +363,7 @@ buttonToday.set_ID(date_string_list[0])
 buttonTomorrow = dates(topFrame,
                         text="Tomorrow",
                         width=12,
-                        bg = "white",
+                        bg = colorToggleOffDate,
                         relief="raised")
 buttonTomorrow.grid(row = 1, column = 1)
 buttonTomorrow.set_ID(date_string_list[1])
@@ -356,7 +372,7 @@ for i in range(2, 7):
     buttonDates = dates(topFrame,
                             text=date_string_list[i],
                             width=12,
-                            bg = "white",
+                            bg = colorToggleOffDate,
                             relief="raised",)
     buttonDates.grid(row = 1, column = i)
     buttonDates.set_ID(date_string_list[i])
@@ -365,8 +381,9 @@ for i in range(2, 7):
 #apply button
 buttonApply = Button(topFrame,
                         text = 'Apply',
+                        fg = colorToggleOn,
                         width=12,
-                        bg='white',
+                        bg= 'gold',
                         relief='raised',
                         command = generateGUI)
 buttonApply.grid(row = 2, column = 6)
@@ -375,14 +392,14 @@ buttonApply.grid(row = 2, column = 6)
 buttonVegetarian = veg(topFrame,
                           text = 'Vegetarian',
                           width = 12,
-                          bg = 'chartreuse1',
+                          bg = colorNoVeg,
                           relief='raised')
 buttonVegetarian.grid(row = 2, column = 4)
 buttonVegetarian.set_ID(1)
 buttonVegan = veg(topFrame,
                           text = 'Vegan',
                           width = 12,
-                          bg = 'chartreuse1',
+                          bg = colorNoVeg,
                           relief='raised')
 buttonVegan.grid(row = 2, column = 5)
 buttonVegan.set_ID(2)
