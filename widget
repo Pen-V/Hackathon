@@ -19,30 +19,25 @@ bottomFrame.grid(row = 1, column = 0)
 listFrame = Frame(window, width=100, height = 3, bg = 'grey')
 listFrame.grid(row = 2, column = 0)
 
-#toggle button for meal selection
-def toggleBreakfast():
-    if buttonBreakfast.config('relief')[-1] == 'sunken':
-        buttonBreakfast.config(relief="raised")
-        buttonBreakfast.config(bg = "white")
-    else:
-        buttonBreakfast.config(relief="sunken")
-        buttonBreakfast.config(bg = "#717171")
-
-def toggleLunch():
-    if buttonLunch.config('relief')[-1] == 'sunken':
-        buttonLunch.config(relief="raised")
-        buttonLunch.config(bg = "white")
-    else:
-        buttonLunch.config(relief="sunken")
-        buttonLunch.config(bg = "#717171")
-
-def toggleDinner():
-    if buttonDinner.config('relief')[-1] == 'sunken':
-        buttonDinner.config(relief="raised")
-        buttonDinner.config(bg = "white")
-    else:
-        buttonDinner.config(relief="sunken")
-        buttonDinner.config(bg = "#717171")
+#object for toggle button for meal selection
+class meals(Button):
+    registry = []
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.config(command = self.click_function)
+        self.registry.append(self)
+    def click_function(self):
+        if self.config('relief')[-1] == 'sunken':
+            self.config(relief="raised")
+            self.config(bg = "white")
+        else:
+            self.config(relief="sunken")
+            self.config(bg = "#717171")
+            for filter in self.registry:
+                if filter != self:
+                    print(filter)
+                    filter.config(relief="raised")
+                    filter.config(bg = "white")
 
 #object for toggle button for star button
 class star(Button):
@@ -65,30 +60,34 @@ class star(Button):
         print(x, y)
         print(favFoods)
 
-#meal selection buttons
-buttonBreakfast = Button(topFrame,
+#meal selection buttons  
+buttonBrunch = meals(topFrame,
+                        text="Brunch",
+                        width=12,
+                        bg = "white",
+                        relief="raised",)
+buttonBrunch.grid(row = 0, column = 0)
+
+buttonBreakfast = meals(topFrame,
                         text="Breakfast",
                         width=12,
                         bg = "white",
-                        relief="raised",
-                        command=toggleBreakfast)
-buttonBreakfast.grid(row = 0, column = 0)
+                        relief="raised",)
+buttonBreakfast.grid(row = 0, column = 1)
 
-buttonLunch = Button(topFrame,
+buttonLunch = meals(topFrame,
                     text="Lunch",
                     width=12,
                     bg = "white",
-                    relief="raised",
-                    command=toggleLunch)
-buttonLunch.grid(row = 0, column = 1)
+                    relief="raised",)
+buttonLunch.grid(row = 0, column = 2)
 
-buttonDinner = Button(topFrame,
+buttonDinner = meals(topFrame,
                     text="Dinner",
                     width=12,
                     bg = "white",
-                    relief="raised",
-                    command=toggleDinner)
-buttonDinner.grid(row = 0, column = 2)
+                    relief="raised",)
+buttonDinner.grid(row = 0, column = 3)
 
 #dining common labels
 labelCarrillo = Label(bottomFrame,
@@ -115,8 +114,7 @@ labelPortola = Label(bottomFrame,
                  anchor = W).grid(row = 0,
                                 column = 3)
 
-#food list labels
-#star button labels
+#food list labels and star buttons
 carrilloMenu = ['a', 'b', 'c']
 for i in range(len(carrilloMenu)):
     carrilloFood = Label(listFrame,
@@ -169,6 +167,7 @@ for i in range(len(portolaMenu)):
                             height = 1,
                             relief = 'raised').grid(row=i+1,
                                             column=7)
-mainloop()
 
+#loop
+mainloop()
 
