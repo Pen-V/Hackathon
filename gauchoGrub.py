@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from tkinter import *
 from datetime import timedelta, date
+import os.path
 
 DCdict = {1: 'Carrillo', 2: 'De La Guerra', 3: 'Ortega', 4: 'Portola'}
 Mealdict = {0: 'Brunch', 1: 'Breakfast', 2: 'Lunch', 3: 'Dinner'} 
@@ -15,7 +16,13 @@ window.title("GauchoGrub")
 
 #list of starred foods
 favFoods = []
+#create a file if no file, and not overwriting the original
+if(not os.path.isfile('favFood.txt')):
+    file = open('favFood.txt', 'w+')
 
+#this can also fix the problem
+#file = open('favFood.txt', 'a+')
+#file.close()
 file = open('favFood.txt', 'r')
 for line in file:
     favFoods.append(line[0 : len(line) - 1])
@@ -381,6 +388,3 @@ buttonVegan.grid(row = 2, column = 5)
 buttonVegan.set_ID(2)
 
 mainloop()
-
-
-
