@@ -141,6 +141,14 @@ for i in range(2, 7):
                             relief="raised",)
     buttonBrunch.grid(row = 1, column = i)
 
+#apply button
+buttonApply = Button(topFrame,
+                        text = 'Apply',
+                        width=12,
+                        bg='white',
+                        relief='raised')
+buttonApply.grid(row = 2, column = 6)
+
 #dining common labels
 labelCarrillo = Label(bottomFrame,
                  text="Carrillo",
